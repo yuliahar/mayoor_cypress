@@ -1,18 +1,44 @@
 {
-  "name": "mayoor",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "npx cypress open --e2e --browser firefox"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "cypress": "^12.3.0"
-  },
-  "devDependencies": {
-    "cypress-plugin-api": "^2.10.0"
-  }
+	"name": "mayoor",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"prepare": "husky install",
+		"format": "prettier --config .prettierrc --write '**/*.{js,json,md}'",
+		"format:check": "prettier --config .prettierrc --check '**/*.{js,json,md}'",
+		"lint": "eslint --quiet --fix",
+		"lint:check": "eslint '**/*.js'",
+		"test": "npx cypress open --e2e --browser firefox"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"cypress": "^12.0.0"
+	},
+	"devDependencies": {
+		"@faker-js/faker": "^7.6.0",
+		"cypress-map": "^1.10.0",
+		"cypress-plugin-api": "^2.10.0",
+		"eslint": "^8.32.0",
+		"eslint-config-prettier": "^8.6.0",
+		"eslint-plugin-cypress": "^2.12.1",
+		"eslint-plugin-mocha": "^10.1.0",
+		"eslint-plugin-prettier": "^4.2.1",
+		"husky": "^8.0.0",
+		"prettier": "^2.8.3"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged"
+		}
+	},
+	"lint-staged": {
+		"*.{js,json,md}": [
+			"npm run lint",
+			"npm run format",
+			"git add"
+		]
+	}
 }
