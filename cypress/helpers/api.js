@@ -1,3 +1,4 @@
+// AUTHENTICATION
 export const apiLogin = ({ email, password }) => {
 	Cypress.log({
 		name: 'apiLogin',
@@ -19,16 +20,32 @@ export const apiLogin = ({ email, password }) => {
 	});
 };
 
-export const apiSetAuthToken = ({ email, password }) => {
-	return apiLogin({ email, password }).then(res => {
-		cy.log('User token: ' + res.body.data.login.token);
-		window.localStorage.setItem('auth-token', res.body.data.login.token);
-		return res;
+export const apiChangePassword = ({ oldPassword, newPassword, token }) => {
+	Cypress.log({
+		name: 'apiChangePassword',
+		displayName: 'apiChangePassword',
+		message: `🔐 Change password: ${oldPassword}: ${newPassword}`,
+		autoEnd: false,
 	});
-};
 
-export const apiLoginAsAdmin = ({ email = 'admin', password = 'admin' }) => {
-	return apiSetAuthToken({ email, password });
+	return cy.apiGraphQLRequest(
+		{
+			query: `mutation changePassword ($oldPassword: String!, $newPassword: String!) {
+							changePassword (oldPassword: $oldPassword, newPassword: $newPassword) {
+									id
+									name
+									email
+									role
+									canBeEdited
+							}
+					}`,
+			variables: {
+				oldPassword,
+				newPassword,
+			},
+		},
+		token
+	);
 };
 
 export const apiGetCurrentUserInfo = () => {
