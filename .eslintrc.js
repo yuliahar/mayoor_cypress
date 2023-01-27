@@ -29,7 +29,7 @@ module.exports = {
 		'mocha/no-sibling-hooks': 'error',
 		'mocha/no-pending-tests': 'error',
 		'mocha/no-identical-title': 'error',
-		'mocha/no-hooks-for-single-case': 'error',
+		'mocha/no-hooks-for-single-case': 'warn',
 		'mocha/no-exclusive-tests': 'error',
 	},
 };

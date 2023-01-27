@@ -1,3 +1,6 @@
+// AUTHENTICATION
+import { generateRandomUser } from '../utils/randomizer';
+
 export const apiLogin = ({ email, password }) => {
 	Cypress.log({
 		name: 'apiLogin',
@@ -19,19 +22,51 @@ export const apiLogin = ({ email, password }) => {
 	});
 };
 
-export const apiSetAuthToken = ({ email, password }) => {
-	return apiLogin({ email, password }).then(res => {
-		cy.log('User token: ' + res.body.data.login.token);
-		window.localStorage.setItem('auth-token', res.body.data.login.token);
-		return res;
+export const apiAuthorizeUser = ({ email, password }) => {
+	Cypress.log({
+		name: 'apiLogin',
+		displayName: 'apiLogin',
+		message: `🔐 Authenticating: ${email}: ${password}`,
+		autoEnd: false,
+	});
+
+	cy.session([email, password], () => {
+		apiLogin({ email, password }).then(response => {
+			window.localStorage.setItem('auth-token', response.body.data.login.token);
+			return response;
+		});
 	});
 };
 
-export const apiLoginAsAdmin = ({ email = 'admin', password = 'admin' }) => {
-	return apiSetAuthToken({ email, password });
+export const apiChangePassword = ({ oldPassword, newPassword, token }) => {
+	Cypress.log({
+		name: 'apiChangePassword',
+		displayName: 'apiChangePassword',
+		message: `🔐 Change password: ${oldPassword}: ${newPassword}`,
+		autoEnd: false,
+	});
+
+	return cy.apiGraphQLRequest(
+		{
+			query: `mutation changePassword ($oldPassword: String!, $newPassword: String!) {
+							changePassword (oldPassword: $oldPassword, newPassword: $newPassword) {
+									id
+									name
+									email
+									role
+									canBeEdited
+							}
+					}`,
+			variables: {
+				oldPassword,
+				newPassword,
+			},
+		},
+		token
+	);
 };
 
-export const apiGetCurrentUserInfo = () => {
+export const apiGetCurrentUserInfo = token => {
 	Cypress.log({
 		name: 'apiGetCurrentUserInfo',
 		displayName: 'apiGetCurrentUserInfo',
@@ -51,7 +86,7 @@ export const apiGetCurrentUserInfo = () => {
       }`,
 		variables: {},
 	};
-	return cy.apiGraphQLRequest(body);
+	return cy.apiGraphQLRequest(body, token);
 };
 
 export const apiCreateUser = user => {
@@ -81,7 +116,14 @@ export const apiCreateUser = user => {
 			},
 		},
 	};
+
 	return cy.apiGraphQLRequest(body);
+};
+
+export const apiCreateRandomUser = () => {
+	const user = generateRandomUser();
+
+	return apiCreateUser(user);
 };
 
 export const apiDeleteUser = id => {
@@ -105,5 +147,21 @@ export const apiDeleteUser = id => {
 		variables: {
 			id,
 		},
+	});
+};
+
+export const apiRegisterAndLogin = user => {
+	const { email, password } = user;
+
+	Cypress.log({
+		name: 'apiRegisterAndLogin',
+		displayName: 'apiRegisterAndLogin',
+		message: `🔐 Registering and authenticating: ${email}: ${password}`,
+		autoEnd: false,
+	});
+
+	return apiCreateUser(user).then(response => {
+		user.id = response.body.data.addUser.id;
+		return apiAuthorizeUser(user);
 	});
 };

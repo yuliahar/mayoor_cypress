@@ -10,9 +10,10 @@ module.exports = defineConfig({
 			apiUrl: 'http://localhost:3000/api/graphql',
 		},
 		experimentalRunAllSpecs: true,
+		experimentalMemoryManagement: true,
 		setupNodeEvents(on, config) {
 			// implement node event listeners here
-			console.log('>>> setupNodeEvents', on, config);
+			return config;
 		},
 		video: false,
 		watchForFileChanges: false,
