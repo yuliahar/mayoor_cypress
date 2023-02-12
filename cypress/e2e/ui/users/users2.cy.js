@@ -1,4 +1,4 @@
-import { apiLogin } from '../../../helpers/api';
+import authService from '../../../helpers/api/authService';
 
 describe('Work with table', function () {
 	const testUser = {
@@ -9,7 +9,7 @@ describe('Work with table', function () {
 	};
 
 	beforeEach(function () {
-		apiLogin({ email: 'admin', password: 'admin' });
+		authService.apiLogin({ email: 'admin', password: 'admin' });
 		cy.visit('/users');
 	});
 

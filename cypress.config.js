@@ -1,4 +1,5 @@
 const { defineConfig } = require('cypress');
+const { dropUsers } = require('./cypress/utils/deleteUsers');
 
 module.exports = defineConfig({
 	e2e: {
@@ -13,6 +14,11 @@ module.exports = defineConfig({
 		experimentalMemoryManagement: true,
 		setupNodeEvents(on, config) {
 			// implement node event listeners here
+			on('task', {
+				'db:dropUsers': () => {
+					return dropUsers();
+				},
+			});
 			return config;
 		},
 		video: false,

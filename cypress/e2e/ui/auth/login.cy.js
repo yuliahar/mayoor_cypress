@@ -1,15 +1,19 @@
-import { apiCreateUser } from '../../../helpers/api';
 import { generateRandomUser } from '../../../utils/randomizer';
+import userService from '../../../helpers/api/userService';
 
 describe('Login', function () {
 	const testUser = generateRandomUser();
 
 	before(function () {
-		apiCreateUser(testUser);
+		userService.apiCreateUser(testUser);
 	});
 
 	beforeEach(function () {
 		cy.visit('/orders/list');
+	});
+
+	after(function () {
+		cy.task('db:dropUsers');
 	});
 
 	it('should login user with valid credentials', function () {

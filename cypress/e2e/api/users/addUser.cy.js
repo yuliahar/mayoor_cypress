@@ -1,103 +1,98 @@
 import { generateRandomUser } from '../../../utils/randomizer';
-import { apiCreateUser, apiLogin } from '../../../helpers/api';
-import { INSECURE_PASSWORD, INVALID_EMAIL, LONG_PASSWORD, SHORT_PASSWORD } from '../../../constants/users';
 import { invalidPasswords } from '../../../data/auth';
+import userService from '../../../helpers/api/userService';
+import authService from '../../../helpers/api/authService';
+import { verifyUserResponse } from '../../../helpers/api/asserts';
+import { usersConstants } from '../../../data/constants';
+import { addUserNegativeTestCases } from '../../../data/users';
 
-describe('/users/addUser', function () {
-	it('should create user with valid data and then login', function () {
-		const testUser = generateRandomUser();
+describe('addUser', function () {
+	after(function () {
+		cy.task('db:dropUsers');
+	});
 
-		apiCreateUser(testUser).then(res => {
-			expect(res.body.data.addUser.id).to.be.not.null;
-			expect(res.body.data.addUser.name).to.eq(testUser.name);
-			expect(res.body.data.addUser.email).to.eq(testUser.email);
-			expect(res.body.data.addUser.role).to.eq(testUser.role);
-			expect(res.body.data.addUser.canBeEdited).to.eq(true);
-			apiLogin(testUser).then(res => {
-				expect(res.body.data.login.token).to.be.not.null;
+	context('positive tests', function () {
+		let userIDtoDelete;
+
+		it('should create user with valid data and then login', function () {
+			const testUser = generateRandomUser();
+
+			userService.apiCreateUser(testUser).then(res => {
+				const { addUser } = res.body.data;
+				userIDtoDelete = addUser.id;
+				verifyUserResponse(addUser, testUser);
+
+				authService.apiLoginWithoutSession(testUser).then(res => {
+					expect(res.body.data.login.token).to.be.not.null;
+				});
 			});
 		});
-	});
 
-	it('should create user with only required data', function () {
-		const testUser = generateRandomUser();
-		delete testUser.role;
-		delete testUser.name;
+		it('should create user with only required data', function () {
+			const testUser = generateRandomUser();
+			delete testUser.role;
+			delete testUser.name;
 
-		apiCreateUser(testUser).then(res => {
-			expect(res.body.data.addUser.id).to.be.not.null;
-			expect(res.body.data.addUser.name).to.eq(null);
-			expect(res.body.data.addUser.email).to.eq(testUser.email);
-			expect(res.body.data.addUser.role).to.eq('FACTORY');
-			expect(res.body.data.addUser.canBeEdited).to.eq(true);
-		});
-	});
-
-	it('should return error when creating a user with already used email / username', function () {
-		const testUser = generateRandomUser();
-
-		apiCreateUser(testUser).then(() => {
-			apiCreateUser(testUser).then(res => {
-				expect(res.body.errors[0].message).to.eq(`User with email "${testUser.email}" already exists`);
+			userService.apiCreateUser(testUser).then(res => {
+				const { addUser } = res.body.data;
+				userIDtoDelete = addUser.id;
+				verifyUserResponse(addUser, testUser);
 			});
 		});
-	});
 
-	it('should return error when creating a user with invalid email', function () {
-		const testUser = generateRandomUser({ email: 'invalidEmail' });
+		it('should create a user with empty name', function () {
+			const testUser = generateRandomUser({ name: '' });
 
-		apiCreateUser(testUser).then(res => {
-			expect(res.body.errors[0].message).to.eq(INVALID_EMAIL);
-		});
-	});
-
-	it('should return error when creating a user with empty email', function () {
-		const testUser = generateRandomUser({ email: '' });
-
-		apiCreateUser(testUser).then(res => {
-			expect(res.body.errors[0].message).to.eq(INVALID_EMAIL);
-		});
-	});
-
-	it('should return error when creating a user with empty password', function () {
-		const testUser = generateRandomUser({ password: '' });
-
-		apiCreateUser(testUser).then(res => {
-			expect(res.body.errors[0].message).to.eq(SHORT_PASSWORD);
-		});
-	});
-
-	it('should return error when creating a user with short password', function () {
-		const testUser = generateRandomUser({ password: '123' });
-
-		apiCreateUser(testUser).then(res => {
-			expect(res.body.errors[0].message).to.eq(SHORT_PASSWORD);
-		});
-	});
-
-	it('should return error when creating a user with long password', function () {
-		const testUser = generateRandomUser({ password: '134365576797654jknhberbfuer' });
-
-		apiCreateUser(testUser).then(res => {
-			expect(res.body.errors[0].message).to.eq(LONG_PASSWORD);
-		});
-	});
-
-	invalidPasswords.forEach(password => {
-		it('should return error when creating a user with insecure password: ' + password, function () {
-			const testUser = generateRandomUser({ password: password });
-
-			apiCreateUser(testUser).then(res => {
-				expect(res.body.errors[0].message).to.eq(INSECURE_PASSWORD);
+			userService.apiCreateUser(testUser).then(res => {
+				const { addUser } = res.body.data;
+				userIDtoDelete = addUser.id;
+				expect(addUser.name).to.eq(testUser.name);
 			});
 		});
+
+		afterEach('mark user to delete', function () {
+			userService.apiDeleteUser(userIDtoDelete);
+		});
 	});
 
-	it('should create a user with empty name', function () {
-		const testUser = generateRandomUser({ name: '' });
+	context('negative tests', function () {
+		it('should return error when creating a user with already used email / username', function () {
+			const testUser = generateRandomUser();
+			let userIDtoDelete;
 
-		apiCreateUser(testUser).then(res => {
-			expect(res.body.data.addUser.name).to.eq(testUser.name);
+			userService.apiCreateUser(testUser).then(res => {
+				userIDtoDelete = res.body.data.addUser.id;
+
+				userService
+					.apiCreateUser(testUser)
+					.then(res => {
+						expect(res.body.errors[0].message).to.eq(`User with email "${testUser.email}" already exists`);
+						return res;
+					})
+					.then(() => {
+						userService.apiDeleteUser(userIDtoDelete);
+					});
+			});
+		});
+
+		addUserNegativeTestCases.forEach(testCase => {
+			it('should return error when creating a user with data: ' + JSON.stringify(testCase.user), function () {
+				const testUser = generateRandomUser(testCase.user);
+
+				userService.apiCreateUser(testUser).then(res => {
+					expect(res.body.errors[0].message).to.eq(testCase.message);
+				});
+			});
+		});
+
+		invalidPasswords.forEach(password => {
+			it('should return error when creating a user with insecure password: ' + password, function () {
+				const testUser = generateRandomUser({ password: password });
+
+				userService.apiCreateUser(testUser).then(res => {
+					expect(res.body.errors[0].message).to.eq(usersConstants.addUser.INSECURE_PASSWORD);
+				});
+			});
 		});
 	});
 });

@@ -1,16 +1,15 @@
 const apiGraphQLUrl = `${Cypress.env('apiUrl')}`;
 
-Cypress.Commands.add('apiGraphQLRequest', (body, currentToken) => {
-	const token = currentToken ? currentToken : window.localStorage.getItem('auth-token');
-
+Cypress.Commands.add('apiGraphQLRequest', (body, token = window.localStorage.getItem('auth-token')) => {
 	return cy.api({
 		method: 'POST',
 		url: apiGraphQLUrl,
-		body,
 		headers: {
+			Accept: 'application/json',
 			Authorization: token ? `Bearer ${token}` : undefined,
 			'Content-Type': 'application/json',
 		},
+		body: JSON.stringify(body),
 		failOnStatusCode: false,
 	});
 });
