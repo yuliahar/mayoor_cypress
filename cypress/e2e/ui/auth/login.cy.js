@@ -3,7 +3,7 @@ import userService from '../../../helpers/api/userService';
 import { fillLoginForm, login } from '../../../helpers/ui/actions';
 import { verifyElementDisabled, verifyElementVisible } from '../../../helpers/ui/asserts';
 import { headerSelectors } from '../../../helpers/ui/selectors/header';
-import { authConstants, commonConstants } from '../../../data/constants';
+import { authConstants, commonConstants } from '../../../helpers/data/constants';
 import { authSelectors } from '../../../helpers/ui/selectors/auth';
 
 describe('Login', function () {

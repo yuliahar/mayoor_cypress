@@ -1,10 +1,10 @@
 import { generateRandomUser } from '../../../utils/randomizer';
-import { invalidPasswords } from '../../../data/auth';
+import { invalidPasswords } from '../../../helpers/data/auth';
 import userService from '../../../helpers/api/userService';
 import authService from '../../../helpers/api/authService';
 import { verifyUserResponse } from '../../../helpers/api/asserts';
-import { commonConstants } from '../../../data/constants';
-import { addUserNegativeTestCases } from '../../../data/users';
+import { commonConstants } from '../../../helpers/data/constants';
+import { addUserNegativeTestCases } from '../../../helpers/data/users';
 
 describe('addUser', function () {
 	context('positive tests', function () {
@@ -52,7 +52,7 @@ describe('addUser', function () {
 	});
 
 	context('negative tests', function () {
-		it('should return error when creating a user with already used email / username', function () {
+		it('should return error when creating a user with already used email', function () {
 			const testUser = generateRandomUser();
 			let userIDtoDelete;
 
@@ -62,7 +62,7 @@ describe('addUser', function () {
 				userService
 					.apiCreateUser(testUser)
 					.then(res => {
-						expect(res.body.errors[0].message).to.eq(`User with email "${testUser.email}" already exists`);
+						expect(res.body.errors[0].message).to.eq(`User with email ${testUser.email} already exists`);
 						return res;
 					})
 					.then(() => {
@@ -72,7 +72,7 @@ describe('addUser', function () {
 		});
 
 		addUserNegativeTestCases.forEach(testCase => {
-			it('should return error when creating a user with data: ' + JSON.stringify(testCase.user), function () {
+			it(testCase.title, function () {
 				const testUser = generateRandomUser(testCase.user);
 
 				userService.apiCreateUser(testUser).then(res => {

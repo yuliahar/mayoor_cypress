@@ -5,6 +5,7 @@ import 'cypress-map';
 Cypress.on('uncaught:exception', () => false);
 
 before(function () {
-	// cy.task('db:dropUsers');
+	cy.task('cleanDb');
+	cy.task('createAdminUser');
 	Cypress.session.clearAllSavedSessions();
 });

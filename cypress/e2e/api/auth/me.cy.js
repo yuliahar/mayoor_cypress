@@ -1,9 +1,9 @@
 import { generateRandomUser } from '../../../utils/randomizer';
 import userService from '../../../helpers/api/userService';
 import authService from '../../../helpers/api/authService';
-import { commonConstants } from '../../../data/constants';
+import { commonConstants } from '../../../helpers/data/constants';
 import { verifyUserResponse } from '../../../helpers/api/asserts';
-import { authNegativeTestCases } from '../../../data/auth';
+import { authNegativeTestCases } from '../../../helpers/data/auth';
 
 describe('me', function () {
 	context('for valid authorized user', function () {

@@ -3,6 +3,10 @@ const fs = require('fs-extra');
 const path = require('path');
 const _ = require('lodash');
 const User = require('./cypress/helpers/models/user');
+const Material = require('./cypress/helpers/models/material');
+const Order = require('./cypress/helpers/models/order');
+const OrderItem = require('./cypress/helpers/models/orderItem');
+const Customer = require('./cypress/helpers/models/customer');
 
 const fetchConfigurationByFile = file => {
 	const pathOfConfigurationFile = `config/cypress.${file}.json`;
@@ -27,7 +31,21 @@ module.exports = defineConfig({
 			const configurationForEnvironment = fetchConfigurationByFile(environment);
 
 			on('task', {
+				cleanDb: async () =>
+					Promise.all([
+						OrderItem.deleteMany(),
+						Order.deleteMany(),
+						Customer.deleteMany(),
+						Material.deleteMany(),
+						User.deleteMany(),
+					]),
 				createUser: User.createUser,
+				createAdminUser: User.createAdminUser,
+				deleteAllUsers: User.deleteMany,
+				deleteAllMaterials: Material.deleteMany,
+				deleteAllOrders: Order.deleteMany,
+				deleteAllOrderItems: OrderItem.deleteMany,
+				deleteAllCustomers: Customer.deleteMany,
 			});
 
 			on('after:spec', (spec, results) => {

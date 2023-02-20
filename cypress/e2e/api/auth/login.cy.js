@@ -1,7 +1,7 @@
 import { generateRandomUser } from '../../../utils/randomizer';
 import authService from '../../../helpers/api/authService';
 import userService from '../../../helpers/api/userService';
-import { authConstants, commonConstants } from '../../../data/constants';
+import { authConstants, commonConstants } from '../../../helpers/data/constants';
 
 describe('login', function () {
 	let testUser = generateRandomUser();

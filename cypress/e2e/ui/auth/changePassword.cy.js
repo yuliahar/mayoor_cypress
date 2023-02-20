@@ -2,7 +2,7 @@ import { generateRandomUser } from '../../../utils/randomizer';
 import userService from '../../../helpers/api/userService';
 import authService from '../../../helpers/api/authService';
 import { changePassword, closeModal, login, logout } from '../../../helpers/ui/actions';
-import { authConstants, commonConstants } from '../../../data/constants';
+import { authConstants, commonConstants } from '../../../helpers/data/constants';
 import { verifyElementVisible } from '../../../helpers/ui/asserts';
 import { headerSelectors } from '../../../helpers/ui/selectors/header';
 import { authSelectors } from '../../../helpers/ui/selectors/auth';

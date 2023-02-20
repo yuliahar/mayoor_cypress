@@ -1,8 +1,8 @@
 import { generateRandomUser } from '../../../utils/randomizer';
-import { invalidPasswords } from '../../../data/auth';
+import { invalidPasswords } from '../../../helpers/data/auth';
 import userService from '../../../helpers/api/userService';
 import authService from '../../../helpers/api/authService';
-import { authConstants, commonConstants } from '../../../data/constants';
+import { authConstants, commonConstants } from '../../../helpers/data/constants';
 import { verifyUserResponse } from '../../../helpers/api/asserts';
 
 describe('changePassword', function () {
@@ -47,7 +47,7 @@ describe('changePassword', function () {
 		});
 
 		it('should return error for empty new password', function () {
-			authService
+			return authService
 				.apiChangePassword({
 					oldPassword: testUser.password,
 					newPassword: '',
@@ -66,7 +66,7 @@ describe('changePassword', function () {
 				token: this.token,
 			};
 
-			authService.apiChangePassword(data).then(res => {
+			return authService.apiChangePassword(data).then(res => {
 				expect(res.body.errors[0].message).to.eq(commonConstants.SHORT_PASSWORD);
 				expect(res.body.data.changePassword).to.be.null;
 			});
@@ -79,7 +79,7 @@ describe('changePassword', function () {
 				token: this.token,
 			};
 
-			authService.apiChangePassword(data).then(res => {
+			return authService.apiChangePassword(data).then(res => {
 				expect(res.body.errors[0].message).to.eq(commonConstants.LONG_PASSWORD);
 				expect(res.body.data.changePassword).to.be.null;
 			});
@@ -102,7 +102,7 @@ describe('changePassword', function () {
 		it('should return error when empty old password', function () {
 			const newPassword = testUser.password + '1';
 
-			authService
+			return authService
 				.apiChangePassword({
 					oldPassword: '',
 					newPassword,
@@ -115,7 +115,7 @@ describe('changePassword', function () {
 		});
 
 		it('should return error when oldPassword = newPassword', function () {
-			authService
+			return authService
 				.apiChangePassword({
 					oldPassword: testUser.password,
 					newPassword: testUser.password,
@@ -169,7 +169,7 @@ describe('changePassword', function () {
 		it('should return error for missing token', function () {
 			const newPassword = testUser.password + '1';
 
-			authService
+			return authService
 				.apiChangePassword({
 					oldPassword: testUser.password,
 					newPassword,
@@ -184,7 +184,7 @@ describe('changePassword', function () {
 				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYTFjMGNhMWNjNTIyZGM1NTJjYTlmYSIs' +
 				'ImlhdCI6MTY3MTU0NTAzNCwiZXhwIjoxNjcxNjMxNDM0fQ.DPe1GbsEYmB3qDMVRG5Of3E9V6Xa8LBMS6v-t7USVA8';
 
-			authService
+			return authService
 				.apiChangePassword({
 					oldPassword: testUser.password,
 					newPassword: testUser.password + '1',

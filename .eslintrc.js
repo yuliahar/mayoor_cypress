@@ -7,7 +7,9 @@ module.exports = {
 		node: true,
 	},
 	parserOptions: {
-		ecmaVersion: 8,
+		// ecmaVersion: 8,
+		ecmaVersion: 2018,
+		sourceType: 'module',
 	},
 	extends: [
 		'eslint:recommended',
@@ -17,6 +19,8 @@ module.exports = {
 	],
 	plugins: ['cypress', 'mocha'],
 	rules: {
+		'no-restricted-syntax': 'off',
+		'no-prototype-builtins': 'off',
 		'cypress/no-assigning-return-values': 'error',
 		'cypress/no-unnecessary-waiting': 'error',
 		'cypress/no-async-tests': 'error',
