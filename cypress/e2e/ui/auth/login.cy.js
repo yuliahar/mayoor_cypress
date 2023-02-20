@@ -1,5 +1,10 @@
 import { generateRandomUser } from '../../../utils/randomizer';
 import userService from '../../../helpers/api/userService';
+import { fillLoginForm, login } from '../../../helpers/ui/actions';
+import { verifyElementDisabled, verifyElementVisible } from '../../../helpers/ui/asserts';
+import { headerSelectors } from '../../../helpers/ui/selectors/header';
+import { authConstants, commonConstants } from '../../../data/constants';
+import { authSelectors } from '../../../helpers/ui/selectors/auth';
 
 describe('Login', function () {
 	const testUser = generateRandomUser();
@@ -9,48 +14,31 @@ describe('Login', function () {
 	});
 
 	beforeEach(function () {
-		cy.visit('/orders/list');
-	});
-
-	after(function () {
-		cy.task('db:dropUsers');
+		cy.visit('/');
 	});
 
 	it('should login user with valid credentials', function () {
-		cy.get('[data-test-id="login-username"]').type(testUser.email);
-		cy.get('[data-test-id="login-password"]').type(testUser.password);
-		cy.get('[data-test-id="login-submit-button"]').click();
-
-		cy.contains('header span', testUser.name);
+		login(testUser.email, testUser.password);
+		verifyElementVisible(headerSelectors.userNameText, testUser.name);
 	});
 
 	it('should verify that login button is disabled for empty email', function () {
-		cy.get('[data-test-id="login-username"]').clear().blur();
-		cy.get('[data-test-id="login-password"]').type(testUser.password);
-
-		cy.get('[data-test-id="login-submit-button"]').should('be.disabled');
+		fillLoginForm('', testUser.password);
+		verifyElementDisabled(authSelectors.loginForm.submitButton);
 	});
 
 	it('should verify that login button is disabled for empty password', function () {
-		cy.get('[data-test-id="login-username"]').type(testUser.email);
-		cy.get('[data-test-id="login-password"]').clear().blur();
-
-		cy.get('[data-test-id="login-submit-button"]').should('be.disabled');
+		fillLoginForm(testUser.email, '');
+		verifyElementDisabled(authSelectors.loginForm.submitButton);
 	});
 
 	it('should display error for non-existing user', function () {
-		cy.get('[data-test-id="login-username"]').type('invalidEmail');
-		cy.get('[data-test-id="login-password"]').type(testUser.password);
-		cy.get('[data-test-id="login-submit-button"]').click();
-
-		cy.contains('.ant-form-item-explain-error', 'User not found');
+		login('invalidEmail', testUser.password);
+		verifyElementVisible(authSelectors.errorMessage, commonConstants.USER_NOT_FOUND);
 	});
 
 	it('should return error for login with invalid password', function () {
-		cy.get('[data-test-id="login-username"]').type(testUser.email);
-		cy.get('[data-test-id="login-password"]').type('invalidPassword');
-		cy.get('[data-test-id="login-submit-button"]').click();
-
-		cy.contains('.ant-form-item-explain-error', 'Invalid password');
+		login(testUser.email, 'invalidPassword');
+		verifyElementVisible(authSelectors.errorMessage, authConstants.login.INVALID_PASSWORD);
 	});
 });

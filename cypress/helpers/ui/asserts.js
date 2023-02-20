@@ -1,11 +1,11 @@
-export const verifyMessageDisplayed = (selector, message) => {
-	cy.get(selector).should('be.visible').and('have.text', message);
-};
-
 export const verifyElementVisible = (selector, text) => {
 	if (text) {
-		cy.contains('header span', text).should('be.visible');
+		cy.get(selector).should('be.visible').and('contain', text);
 	} else {
 		cy.get(selector).should('be.visible');
 	}
+};
+
+export const verifyElementDisabled = selector => {
+	cy.get(selector).should('be.disabled');
 };

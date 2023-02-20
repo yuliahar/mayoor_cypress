@@ -2,6 +2,7 @@
 export const authConstants = {
 	login: {
 		INCORRECT_PASSWORD: 'Incorrect password',
+		INVALID_PASSWORD: 'Invalid password',
 	},
 	changePassword: {
 		INCORRECT_PASSWORD: 'Incorrect password',

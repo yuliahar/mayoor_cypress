@@ -3,4 +3,4 @@ node_modules
 
 # Ignore all HTML files:
 *.html
-.env.*
+prisma/.env.example

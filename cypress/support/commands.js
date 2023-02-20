@@ -13,3 +13,12 @@ Cypress.Commands.add('apiGraphQLRequest', (body, token = window.localStorage.get
 		failOnStatusCode: false,
 	});
 });
+
+Cypress.Commands.add('clearAndType', { prevSubject: true }, (subject, value, ...args) => {
+	return value
+		? cy
+				.wrap(subject)
+				.clear()
+				.type(value, ...args)
+		: cy.wrap(subject).clear();
+});

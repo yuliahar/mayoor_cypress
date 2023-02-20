@@ -1,0 +1,145 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator nexusPrisma {
+  provider = "nexus-prisma"
+}
+
+model User {
+  id             String          @id @default(cuid()) @map("_id")
+  role           UserRole        @default(FACTORY)
+  email          String          @unique
+  password       String
+  name           String?
+  materials      Material[]
+  orders         Order[]
+  orderItems     OrderItem[]
+  productionLogs ProductionLog[]
+  customers      Customer[]
+  addresses      Address[]
+  deleted        Boolean         @default(false)
+  canBeEdited    Boolean         @default(true)
+}
+
+model Material {
+  id              String      @id @default(cuid()) @map("_id")
+  name            String
+  price           Float
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  createdBy       User        @relation(fields: [createdByUserId], references: [id])
+  createdByUserId String
+  orderItems      OrderItem[]
+  deleted         Boolean     @default(false)
+}
+
+model Order {
+  id              String      @id @default(cuid()) @map("_id")
+  number          Int         @unique
+  customer        Customer?   @relation(fields: [customerId], references: [id])
+  customerId      String?
+  shippedAt       DateTime?
+  totalPrice      Float
+  totalTax        Float
+  note            String?
+  items           OrderItem[]
+  urgency         Int         @default(0)
+  status          OrderStatus
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  createdBy       User        @relation(fields: [createdByUserId], references: [id])
+  deleted         Boolean     @default(false)
+  createdByUserId String
+}
+
+model OrderItem {
+  id              String          @id @default(cuid()) @map("_id")
+  material        Material?       @relation(fields: [materialId], references: [id])
+  materialId      String?
+  totalPrice      Float
+  totalTax        Float
+  name            String?
+  width           Float?
+  height          Float?
+  pieces          Int?
+  order           Order           @relation(fields: [orderId], references: [id])
+  orderId         String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  createdBy       User            @relation(fields: [createdByUserId], references: [id])
+  createdByUserId String
+  productionLogs  ProductionLog[]
+}
+
+model ProductionLog {
+  id              String              @id @default(cuid()) @map("_id")
+  orderItem       OrderItem           @relation(fields: [orderItemId], references: [id])
+  orderItemId     String
+  action          ProductionLogAction
+  pieces          Int
+  createdAt       DateTime            @default(now())
+  createdBy       User                @relation(fields: [createdByUserId], references: [id])
+  createdByUserId String
+}
+
+model Customer {
+  id                      String    @id @default(cuid()) @map("_id")
+  name                    String?
+  personName              String?
+  phone                   String?
+  email                   String?
+  identificationNumber    String?
+  taxIdentificationNumber String?
+  allowedBankPayments     Boolean   @default(false)
+  address                 Address[]
+  note                    String?
+  createdBy               User      @relation(fields: [createdByUserId], references: [id])
+  createdByUserId         String
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  orders                  Order[]
+  deleted                 Boolean   @default(false)
+}
+
+model Address {
+  id              String   @id @default(cuid()) @map("_id")
+  street          String?
+  number          String?
+  city            String?
+  state           String?
+  postNumber      String?
+  customer        Customer @relation(fields: [customerId], references: [id])
+  customerId      String
+  isPrimary       Boolean  @default(false)
+  createdBy       User     @relation(fields: [createdByUserId], references: [id])
+  createdByUserId String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  deleted         Boolean  @default(false)
+}
+
+enum UserRole {
+  ADMINISTRATION
+  EXECUTIVE
+  FACTORY
+}
+
+enum OrderStatus {
+  NEW
+  WAITING_FOR_CALCULATION
+  READY_TO_PRINT
+  WAITING_FOR_PRODUCTION
+  TO_BE_SHIPPED
+  DONE
+}
+
+enum ProductionLogAction {
+  PRINT
+  PRODUCTION
+}

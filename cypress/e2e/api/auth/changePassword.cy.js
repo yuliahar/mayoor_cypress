@@ -21,7 +21,7 @@ describe('changePassword', function () {
 		});
 
 		it('should change password with valid data and login with new password', function () {
-			const newPassword = testUser.password + '1';
+			const newPassword = 'newPassword123!';
 
 			authService
 				.apiChangePassword({
@@ -29,6 +29,7 @@ describe('changePassword', function () {
 					newPassword,
 				})
 				.then(res => {
+					expect(res.body.errors).to.be.undefined;
 					const { changePassword } = res.body.data;
 					verifyUserResponse(changePassword, testUser);
 				});
@@ -53,12 +54,39 @@ describe('changePassword', function () {
 					token: this.token,
 				})
 				.then(res => {
-					expect(res.body.errors[0].message).to.eq(authConstants.changePassword.SHORT_PASSWORD);
+					expect(res.body.errors[0].message).to.eq(commonConstants.SHORT_PASSWORD);
+					expect(res.body.data.changePassword).to.be.null;
 				});
 		});
 
+		it('should throw an error if the new password is too short', function () {
+			const data = {
+				oldPassword: testUser.password,
+				newPassword: 'short',
+				token: this.token,
+			};
+
+			authService.apiChangePassword(data).then(res => {
+				expect(res.body.errors[0].message).to.eq(commonConstants.SHORT_PASSWORD);
+				expect(res.body.data.changePassword).to.be.null;
+			});
+		});
+
+		it('should throw an error if the new password is too long', function () {
+			const data = {
+				oldPassword: testUser.password,
+				newPassword: 'long'.repeat(6),
+				token: this.token,
+			};
+
+			authService.apiChangePassword(data).then(res => {
+				expect(res.body.errors[0].message).to.eq(commonConstants.LONG_PASSWORD);
+				expect(res.body.data.changePassword).to.be.null;
+			});
+		});
+
 		invalidPasswords.forEach(password => {
-			it('should return error when invalid old password: ' + password, function () {
+			it('should return error when invalid new password: ' + password, function () {
 				authService
 					.apiChangePassword({
 						oldPassword: testUser.password,
@@ -66,7 +94,7 @@ describe('changePassword', function () {
 						token: this.token,
 					})
 					.then(res => {
-						expect(res.body.errors[0].message).to.eq(authConstants.changePassword.INVALID_PASSWORD);
+						expect(res.body.errors[0].message).to.eq(commonConstants.INSECURE_PASSWORD);
 					});
 			});
 		});
@@ -82,6 +110,7 @@ describe('changePassword', function () {
 				})
 				.then(res => {
 					expect(res.body.errors[0].message).to.eq(authConstants.changePassword.INCORRECT_OLD_PASSWORD);
+					expect(res.body.data.changePassword).to.be.null;
 				});
 		});
 
@@ -93,7 +122,8 @@ describe('changePassword', function () {
 					token: this.token,
 				})
 				.then(res => {
-					expect(res.body.errors[0].message).to.eq(authConstants.changePassword.PASSWORDS_SAME);
+					expect(res.body.errors[0].message).to.eq(authConstants.changePassword.SAME_PASSWORD);
+					expect(res.body.data.changePassword).to.be.null;
 				});
 		});
 
@@ -110,7 +140,27 @@ describe('changePassword', function () {
 					})
 					.then(res => {
 						expect(res.body.errors[0].message).to.eq(authConstants.changePassword.NO_PERMISSION);
+						expect(res.body.data.changePassword).to.be.null;
 					});
+			});
+		});
+
+		it('should return error when old password is incorrect', { skipBeforeEach: true }, function () {
+			const randomUser = generateRandomUser({ canBeEdited: false });
+
+			cy.task('createUser', randomUser).then(() => {
+				authService.apiLogin(randomUser);
+
+				const data = {
+					oldPassword: randomUser.password,
+					newPassword: randomUser.password + '1',
+					token: this.token,
+				};
+
+				authService.apiChangePassword(data).then(res => {
+					expect(res.body.errors[0].message).to.eq(authConstants.changePassword.NO_PERMISSION);
+					expect(res.body.data.changePassword).to.be.null;
+				});
 			});
 		});
 	});

@@ -1,0 +1,12 @@
+{
+	"baseUrl": "https://mayoor-qa.vercel.app",
+	"env": {
+		"environment": "qa",
+		"apiUrl": "https://mayoor-qa.vercel.app/api/graphql"
+	},
+	"videoUploadOnPasses": false,
+	"retries": {
+		"runMode": 2,
+		"openMode": 1
+	}
+}

@@ -1,4 +1,4 @@
-import { usersConstants } from './constants';
+import { commonConstants, usersConstants } from './constants';
 
 export const addUserNegativeTestCases = [
 	{
@@ -11,14 +11,14 @@ export const addUserNegativeTestCases = [
 	},
 	{
 		user: { password: '' },
-		message: usersConstants.addUser.SHORT_PASSWORD,
+		message: commonConstants.SHORT_PASSWORD,
 	},
 	{
 		user: { password: '123' },
-		message: usersConstants.addUser.SHORT_PASSWORD,
+		message: commonConstants.SHORT_PASSWORD,
 	},
 	{
 		user: { password: '123456789012345678901' },
-		message: usersConstants.addUser.LONG_PASSWORD,
+		message: commonConstants.LONG_PASSWORD,
 	},
 ];

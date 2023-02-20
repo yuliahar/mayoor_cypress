@@ -1,27 +1,23 @@
+import { authSelectors } from './selectors/auth';
+import { headerSelectors } from './selectors/header';
+
+// AUTH
 export const login = (email, password) => {
-	cy.get('[data-test-id="login-username"]').type(email);
-	cy.get('[data-test-id="login-password"]').type(password);
-	cy.get('[data-test-id="login-submit-button"]').click();
+	fillLoginForm(email, password);
+	cy.get(authSelectors.loginForm.submitButton).click();
+};
+
+export const fillLoginForm = (email, password) => {
+	cy.get(authSelectors.loginForm.usernameInput).clearAndType(email).blur();
+	cy.get(authSelectors.loginForm.passwordInput).clearAndType(password).blur();
 };
 
 export const changePassword = (name, password, newPassword, newPasswordRepeat = newPassword) => {
-	cy.contains('header button', name).click();
+	cy.contains(headerSelectors.userNameText, name).click();
 
-	if (!password) {
-		cy.get('[name="oldPassword"]').clear().blur();
-	} else {
-		cy.get('[name="oldPassword"]').type(password);
-	}
-	if (!newPassword) {
-		cy.get('[name="newPassword"]').clear().blur();
-	} else {
-		cy.get('[name="newPassword"]').type(newPassword);
-	}
-	if (!newPasswordRepeat) {
-		cy.get('[name="newPasswordRepeat"]').clear().blur();
-	} else {
-		cy.get('[name="newPasswordRepeat"]').type(newPasswordRepeat);
-	}
+	cy.get('[name="oldPassword"]').clearAndType(password).blur();
+	cy.get('[name="newPassword"]').clearAndType(newPassword).blur();
+	cy.get('[name="newPasswordRepeat"]').clearAndType(newPasswordRepeat).blur();
 	cy.contains('button', 'Change password').click();
 };
 

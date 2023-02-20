@@ -1,10 +1,11 @@
-const mongoose = require('mongoose');
-require('colors');
+import mongoose from 'mongoose';
+import 'colors';
 
 async function dropUsers() {
 	let connection;
 
 	const connectionString = 'mongodb://mongo1:30001,mongo2:30002,mongo3:30003/mayoor?replicaSet=my-replica-set';
+	//const connectionString = 'mongodb+srv://admin:T5uMxbNQL5qx7Kut@cluster0.notgjl1.mongodb.net/mayoor?retryWrites=true&w=majority';
 
 	const options = {
 		useNewUrlParser: true,
@@ -26,9 +27,7 @@ async function dropUsers() {
 		console.log('Users have been deleted!'.blue.inverse);
 	}
 
-	return null;
+	process.exit(0);
 }
 
-module.exports = {
-	dropUsers,
-};
+dropUsers()

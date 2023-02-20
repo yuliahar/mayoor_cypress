@@ -3,11 +3,10 @@ import userService from '../../../helpers/api/userService';
 import authService from '../../../helpers/api/authService';
 import { changePassword, closeModal, login, logout } from '../../../helpers/ui/actions';
 import { authConstants, commonConstants } from '../../../data/constants';
-import { verifyElementVisible, verifyMessageDisplayed } from '../../../helpers/ui/asserts';
+import { verifyElementVisible } from '../../../helpers/ui/asserts';
 import { headerSelectors } from '../../../helpers/ui/selectors/header';
-import { changePasswordSelectors } from '../../../helpers/ui/selectors/auth';
+import { authSelectors } from '../../../helpers/ui/selectors/auth';
 
-// TODO: add user deletion after test
 describe('Change password', function () {
 	const newPassword = 'newPa33word!';
 
@@ -20,7 +19,7 @@ describe('Change password', function () {
 			changePassword(testUser.name, testUser.password, newPassword);
 
 			const successMessage = authConstants.changePassword.SUCCESS_MESSAGE;
-			verifyMessageDisplayed(changePasswordSelectors.successMessage, successMessage);
+			verifyElementVisible(authSelectors.successMessage, successMessage);
 
 			closeModal();
 			logout();
@@ -83,7 +82,7 @@ describe('Change password', function () {
 		].forEach(test => {
 			it(test.title, function () {
 				changePassword(testUser.name, test.oldPassword, test.newPassword, test.newPasswordRepeat);
-				verifyMessageDisplayed(changePasswordSelectors.errorMessage, test.message);
+				verifyElementVisible(authSelectors.errorMessage, test.message);
 			});
 		});
 	});

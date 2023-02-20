@@ -3,14 +3,10 @@ import { invalidPasswords } from '../../../data/auth';
 import userService from '../../../helpers/api/userService';
 import authService from '../../../helpers/api/authService';
 import { verifyUserResponse } from '../../../helpers/api/asserts';
-import { usersConstants } from '../../../data/constants';
+import { commonConstants } from '../../../data/constants';
 import { addUserNegativeTestCases } from '../../../data/users';
 
 describe('addUser', function () {
-	after(function () {
-		cy.task('db:dropUsers');
-	});
-
 	context('positive tests', function () {
 		let userIDtoDelete;
 
@@ -90,7 +86,7 @@ describe('addUser', function () {
 				const testUser = generateRandomUser({ password: password });
 
 				userService.apiCreateUser(testUser).then(res => {
-					expect(res.body.errors[0].message).to.eq(usersConstants.addUser.INSECURE_PASSWORD);
+					expect(res.body.errors[0].message).to.eq(commonConstants.INSECURE_PASSWORD);
 				});
 			});
 		});

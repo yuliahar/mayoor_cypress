@@ -1,27 +1,62 @@
 const { defineConfig } = require('cypress');
-const { dropUsers } = require('./cypress/utils/deleteUsers');
+const fs = require('fs-extra');
+const path = require('path');
+const _ = require('lodash');
+const User = require('./cypress/helpers/models/user');
+
+const fetchConfigurationByFile = file => {
+	const pathOfConfigurationFile = `config/cypress.${file}.json`;
+
+	return file && fs.readJson(path.join(__dirname, '../mayoor/cypress', pathOfConfigurationFile));
+};
 
 module.exports = defineConfig({
 	e2e: {
-		baseUrl: 'http://localhost:3000',
 		chromeWebSecurity: false,
+		defaultCommandTimeout: 15000,
 		excludeSpecPattern: ['**/api/variables.cy.js'],
 		env: {
 			snapshotOnly: true,
-			apiUrl: 'http://localhost:3000/api/graphql',
 		},
 		experimentalRunAllSpecs: true,
 		experimentalMemoryManagement: true,
+		requestTimeout: 15000,
+		responseTimeout: 15000,
 		setupNodeEvents(on, config) {
-			// implement node event listeners here
+			const environment = config.env.configFile || 'development';
+			const configurationForEnvironment = fetchConfigurationByFile(environment);
+
 			on('task', {
-				'db:dropUsers': () => {
-					return dropUsers();
-				},
+				createUser: User.createUser,
 			});
-			return config;
+
+			on('after:spec', (spec, results) => {
+				if (results && results.video) {
+					// Do we have failures for any retry attempts?
+					const failures = _.some(results.tests, test => {
+						return _.some(test.attempts, { state: 'failed' });
+					});
+					if (!failures) {
+						// delete the video if the spec passed and no tests retried
+						return fs.remove(results.video, function (err) {
+							if (err && err.code == 'ENOENT') {
+								// file doesn't exist
+								console.info("File doesn't exist, won't remove it.");
+							} else if (err) {
+								// other errors, e.g. maybe we don't have enough permission
+								console.error('Error occurred while trying to remove file.');
+							} else {
+								console.info(`Video ${results.video} removed.`);
+							}
+						});
+					}
+				}
+			});
+
+			return configurationForEnvironment || config;
 		},
-		video: false,
+		viewportHeight: 1080,
+		viewportWidth: 1920,
 		watchForFileChanges: false,
 	},
 });
