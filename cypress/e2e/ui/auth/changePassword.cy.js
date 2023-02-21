@@ -1,11 +1,11 @@
 import { generateRandomUser } from '../../../utils/randomizer';
 import userService from '../../../helpers/api/userService';
 import authService from '../../../helpers/api/authService';
-import { changePassword, closeModal, login, logout } from '../../../helpers/ui/actions';
+import { changePassword, closeModal, login, logout } from '../../../helpers/ui/actions/auth';
 import { authConstants, commonConstants } from '../../../helpers/data/constants';
-import { verifyElementVisible } from '../../../helpers/ui/asserts';
+import { verifyElementVisible } from '../../../helpers/ui/asserts/asserts';
 import { headerSelectors } from '../../../helpers/ui/selectors/header';
-import { authSelectors } from '../../../helpers/ui/selectors/auth';
+import { commonSelectors } from '../../../helpers/ui/selectors/common';
 
 describe('Change password', function () {
 	const newPassword = 'newPa33word!';
@@ -19,7 +19,7 @@ describe('Change password', function () {
 			changePassword(testUser.name, testUser.password, newPassword);
 
 			const successMessage = authConstants.changePassword.SUCCESS_MESSAGE;
-			verifyElementVisible(authSelectors.successMessage, successMessage);
+			verifyElementVisible(commonSelectors.successMessage, successMessage);
 
 			closeModal();
 			logout();
@@ -82,7 +82,7 @@ describe('Change password', function () {
 		].forEach(test => {
 			it(test.title, function () {
 				changePassword(testUser.name, test.oldPassword, test.newPassword, test.newPasswordRepeat);
-				verifyElementVisible(authSelectors.errorMessage, test.message);
+				verifyElementVisible(commonSelectors.explainErrorMessage, test.message);
 			});
 		});
 	});

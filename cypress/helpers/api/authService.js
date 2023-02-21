@@ -1,4 +1,4 @@
-const loginWithoutSession = ({ email, password }) => {
+const login = ({ email, password }) => {
 	Cypress.log({
 		name: 'apiLogin',
 		displayName: 'apiLogin',
@@ -21,19 +21,19 @@ const loginWithoutSession = ({ email, password }) => {
 
 const authService = {
 	apiLoginWithoutSession: ({ email, password }) => {
-		return loginWithoutSession({ email, password });
+		return login({ email, password });
 	},
 
 	apiLogin: ({ email, password }) => {
 		Cypress.log({
 			name: 'apiLogin',
 			displayName: 'apiLogin',
-			message: `🔐 Authenticating: ${email}: ${password}`,
+			message: `🔐 Authenticating: ${email}`,
 			autoEnd: false,
 		});
 
 		cy.session([email, password], () => {
-			loginWithoutSession({ email, password }).then(response => {
+			login({ email, password }).then(response => {
 				window.localStorage.setItem('auth-token', response.body.data.login.token);
 				return response;
 			});

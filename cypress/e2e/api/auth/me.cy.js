@@ -12,8 +12,8 @@ describe('me', function () {
 		it('should return user info for valid authorized user', function () {
 			userService.apiRegisterAndLogin(user);
 			authService.apiGetCurrentUserInfo().then(res => {
-				const { me } = res.body.data;
-				verifyUserResponse(me, user);
+				expect(res.body.errors).to.be.undefined;
+				verifyUserResponse(res.body.data.me, user);
 			});
 		});
 	});
@@ -25,6 +25,7 @@ describe('me', function () {
 			it('should return error for invalid token: ' + token, function () {
 				authService.apiGetCurrentUserInfo(token).then(res => {
 					expect(res.body.errors[0].message).to.equal(message);
+					expect(res.body.data.me).to.be.null;
 				});
 			});
 		});
@@ -39,6 +40,7 @@ describe('me', function () {
 			cy.get('@apiDeleteUser').then(() => {
 				authService.apiGetCurrentUserInfo().then(res => {
 					expect(res.body.errors[0].message).to.equal(commonConstants.USER_NOT_FOUND);
+					expect(res.body.data.me).to.be.null;
 				});
 			});
 		});

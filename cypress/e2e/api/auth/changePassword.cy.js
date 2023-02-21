@@ -21,18 +21,15 @@ describe('changePassword', function () {
 		});
 
 		it('should change password with valid data and login with new password', function () {
-			const newPassword = 'newPassword123!';
+			const requestData = {
+				oldPassword: testUser.password,
+				newPassword: 'newPassword123!',
+			};
 
-			authService
-				.apiChangePassword({
-					oldPassword: testUser.password,
-					newPassword,
-				})
-				.then(res => {
-					expect(res.body.errors).to.be.undefined;
-					const { changePassword } = res.body.data;
-					verifyUserResponse(changePassword, testUser);
-				});
+			authService.apiChangePassword(requestData).then(res => {
+				expect(res.body.errors).to.be.undefined;
+				verifyUserResponse(res.body.data.changePassword, testUser);
+			});
 
 			// should not be able to log in with old password
 			authService.apiLoginWithoutSession(testUser).then(res => {
@@ -40,23 +37,23 @@ describe('changePassword', function () {
 			});
 
 			// should be able to log in with new password
-			testUser.password = newPassword;
+			testUser.password = requestData.newPassword;
 			authService.apiLoginWithoutSession(testUser).then(res => {
 				expect(res.body.data.login.token).to.not.be.null;
 			});
 		});
 
 		it('should return error for empty new password', function () {
-			return authService
-				.apiChangePassword({
-					oldPassword: testUser.password,
-					newPassword: '',
-					token: this.token,
-				})
-				.then(res => {
-					expect(res.body.errors[0].message).to.eq(commonConstants.SHORT_PASSWORD);
-					expect(res.body.data.changePassword).to.be.null;
-				});
+			const requestData = {
+				oldPassword: testUser.password,
+				newPassword: '',
+				token: this.token,
+			};
+
+			return authService.apiChangePassword(requestData).then(res => {
+				expect(res.body.errors[0].message).to.eq(commonConstants.SHORT_PASSWORD);
+				expect(res.body.data.changePassword).to.be.null;
+			});
 		});
 
 		it('should throw an error if the new password is too short', function () {

@@ -12,6 +12,7 @@ describe('login', function () {
 
 	it('should login with valid credentials #smoke', function () {
 		authService.apiLoginWithoutSession(testUser).then(res => {
+			expect(res.body.errors).to.be.undefined;
 			expect(res.body.data.login.token).to.not.be.null;
 		});
 	});
@@ -25,6 +26,7 @@ describe('login', function () {
 		it(`should return error for login with invalid credentials: ${JSON.stringify(test.user)}`, function () {
 			authService.apiLoginWithoutSession(test.user).then(res => {
 				expect(res.body.errors[0].message).to.equal(test.message);
+				expect(res.body.data.login).to.be.null;
 			});
 		});
 	});

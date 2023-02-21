@@ -1,10 +1,11 @@
 import { generateRandomUser } from '../../../utils/randomizer';
 import userService from '../../../helpers/api/userService';
-import { fillLoginForm, login } from '../../../helpers/ui/actions';
-import { verifyElementDisabled, verifyElementVisible } from '../../../helpers/ui/asserts';
+import { fillLoginForm, login } from '../../../helpers/ui/actions/auth';
+import { verifyElementDisabled, verifyElementVisible } from '../../../helpers/ui/asserts/asserts';
 import { headerSelectors } from '../../../helpers/ui/selectors/header';
 import { authConstants, commonConstants } from '../../../helpers/data/constants';
 import { authSelectors } from '../../../helpers/ui/selectors/auth';
+import { commonSelectors } from '../../../helpers/ui/selectors/common';
 
 describe('Login', function () {
 	const testUser = generateRandomUser();
@@ -34,11 +35,11 @@ describe('Login', function () {
 
 	it('should display error for non-existing user', function () {
 		login('invalidEmail', testUser.password);
-		verifyElementVisible(authSelectors.errorMessage, commonConstants.USER_NOT_FOUND);
+		verifyElementVisible(commonSelectors.explainErrorMessage, commonConstants.USER_NOT_FOUND);
 	});
 
 	it('should return error for login with invalid password', function () {
 		login(testUser.email, 'invalidPassword');
-		verifyElementVisible(authSelectors.errorMessage, authConstants.login.INVALID_PASSWORD);
+		verifyElementVisible(commonSelectors.explainErrorMessage, authConstants.login.INVALID_PASSWORD);
 	});
 });

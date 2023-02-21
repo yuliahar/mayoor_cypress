@@ -19,6 +19,7 @@ describe('addUser', function () {
 				verifyUserResponse(addUser, testUser);
 
 				authService.apiLoginWithoutSession(testUser).then(res => {
+					expect(res.body.errors).to.be.undefined;
 					expect(res.body.data.login.token).to.be.not.null;
 				});
 			});
@@ -30,6 +31,7 @@ describe('addUser', function () {
 			delete testUser.name;
 
 			userService.apiCreateUser(testUser).then(res => {
+				expect(res.body.errors).to.be.undefined;
 				const { addUser } = res.body.data;
 				userIDtoDelete = addUser.id;
 				verifyUserResponse(addUser, testUser);
@@ -40,6 +42,7 @@ describe('addUser', function () {
 			const testUser = generateRandomUser({ name: '' });
 
 			userService.apiCreateUser(testUser).then(res => {
+				expect(res.body.errors).to.be.undefined;
 				const { addUser } = res.body.data;
 				userIDtoDelete = addUser.id;
 				expect(addUser.name).to.eq(testUser.name);
