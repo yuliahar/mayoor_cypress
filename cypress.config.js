@@ -11,7 +11,7 @@ const Customer = require('./cypress/helpers/models/customer');
 const fetchConfigurationByFile = file => {
 	const pathOfConfigurationFile = `config/cypress.${file}.json`;
 
-	return file && fs.readJson(path.join(__dirname, '../mayoor/cypress', pathOfConfigurationFile));
+	return file && fs.readJson(path.join(__dirname, '../mayoor_cypress/cypress', pathOfConfigurationFile));
 };
 
 module.exports = defineConfig({
@@ -26,6 +26,17 @@ module.exports = defineConfig({
 		experimentalMemoryManagement: true,
 		requestTimeout: 15000,
 		responseTimeout: 15000,
+		reporter: 'cypress-multi-reporters',
+		reporterOptions: {
+			reporterEnabled: 'mochawesome',
+			mochawesomeReporterOptions: {
+				reportDir: 'cypress/reports/mocha',
+				quite: true,
+				overwrite: false,
+				html: false,
+				json: true,
+			},
+		},
 		setupNodeEvents(on, config) {
 			const environment = config.env.configFile || 'development';
 			const configurationForEnvironment = fetchConfigurationByFile(environment);

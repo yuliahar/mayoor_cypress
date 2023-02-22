@@ -84,7 +84,7 @@ describe('Users', function () {
 		const randomUser = generateRandomUser();
 
 		createUser(randomUser);
-		verifyElementVisible('.ant-message-success', 'User created');
+		verifyElementVisible(commonSelectors.successMessage, 'User created');
 		logout();
 		login(randomUser.email, randomUser.password);
 
