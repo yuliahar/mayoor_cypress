@@ -8,7 +8,7 @@
 		"cy:open:dev:chrome": "cypress open --e2e --browser chrome --env configFile=development",
 		"cy:run:dev": "cypress run --env configFile=development",
 		"cy:open:qa": "cypress open --e2e --env configFile=qa",
-		"cy:run:qa": "cypress run --env configFile=qa",
+		"cy:run:qa": "npx cypress run --env configFile=qa",
 		"prepare": "husky install",
 		"format": "prettier --config .prettierrc --write '**/*.{js,json,md}'",
 		"format:check": "prettier --config .prettierrc --check '**/*.{js,json,md}'",
