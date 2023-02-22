@@ -12,10 +12,10 @@ on:
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        containers: [1, 2, 3]
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         containers: [1, 2, 3]
 
     steps:
       - name: Checkout
