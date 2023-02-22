@@ -25,6 +25,4 @@ jobs:
       - name: Prisma generate
         run: npm run generate:prisma
       - name: Cypress run
-        uses: cypress-io/github-action@v5
-        with:
-          start: npm run cy:run:qa
+        run: npx cypress run --env configFile=qa
