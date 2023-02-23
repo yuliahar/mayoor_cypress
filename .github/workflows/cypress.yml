@@ -78,7 +78,9 @@ jobs:
         run: cp -r cypress/logs public/logs
 
       - name: Merge test results into one
-        run: npm run combine-reports
+        run: |
+          mkdir cypress/reports/mochareports
+          npm run combine-reports
 
       - name: Generate HTML report
         run: npm run generate-report
