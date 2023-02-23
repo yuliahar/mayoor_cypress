@@ -32,7 +32,7 @@ jobs:
         with:
           # we have already installed all dependencies above
           install: false
-          command: npx cypress run --env configFile=qa
+          command: npm test
           browser: chrome
           continue-on-error: true
         env:
@@ -47,43 +47,27 @@ jobs:
           name: cypress-screenshots
           path: cypress/screenshots
 
-      - name: Upload Cypress Logs
-        uses: actions/upload-artifact@v1
-        # Only capture logs on failure
-        if: failure()
-        with:
-          name: cypress-logs
-          path: cypress/logs
-
-      - name: Upload Cypress Videos
-        uses: actions/upload-artifact@v1
-        # Only capture videos on failure
-        if: failure()
-        with:
-          name: cypress-videos
-          path: cypress/videos
-
-      - name: Merge test results into one
-        run: |
-          mkdir cypress/reports/mochareports
-          npm run combine-reports
-
-      - name: Generate HTML report
-        run: npm run generate-report
+#      - name: Upload Cypress Videos
+#        uses: actions/upload-artifact@v1
+#        # Only capture videos on failure
+#        if: failure()
+#        with:
+#          name: cypress-videos
+#          path: cypress/videos
 
       - name: Upload a Build Artifact
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: mochawesome-report
-          path: cypress/reports/mochareports
+          name: mochawesome
+          path: cypress/reports
 
       - name: Reports deploy 🚀
         if: always()
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           BRANCH: gh-pages
-          FOLDER: mochawesome-report
+          FOLDER: cypress/reports
 
 #      - name: Deploy report page
 #        uses: peaceiris/actions-gh-pages@v3

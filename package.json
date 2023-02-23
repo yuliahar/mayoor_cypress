@@ -15,12 +15,9 @@
 		"lint": "eslint --quiet --fix",
 		"lint:check": "eslint '**/*.js'",
 		"generate:prisma": "prisma generate",
-		"clean:reports": "rm -R -f cypress/reports && mkdir cypress/reports && mkdir cypress/reports/mochareports",
+		"clean:reports": "rm -R -f cypress/reports && mkdir cypress/reports",
 		"pretest": "npm run clean:reports",
-		"combine-reports": "mochawesome-merge cypress/reports/mocha/*.json > cypress/reports/mochareports/report.json",
-		"generate-report": "marge cypress/reports/mochareports/report.json -f report -o cypress/reports/mochareports",
-		"posttest": "npm run combine-reports && npm run generate-report",
-		"test": "npm run cy:run:dev || npm run posttest"
+		"test": "npm run cy:run:qa"
 	},
 	"keywords": [],
 	"author": "",
@@ -32,6 +29,7 @@
 		"colors": "^1.4.0",
 		"cypress": "^12.6.0",
 		"cypress-map": "^1.10.0",
+		"cypress-mochawesome-reporter": "^3.3.0",
 		"cypress-multi-reporters": "^1.6.2",
 		"cypress-plugin-api": "^2.10.0",
 		"del": "^7.0.0",

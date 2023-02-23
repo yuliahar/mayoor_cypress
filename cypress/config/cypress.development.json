@@ -4,5 +4,5 @@
 		"environment": "development",
 		"apiUrl": "http://localhost:3000/api/graphql"
 	},
-	"video": false
+	"videoUploadOnPasses": false
 }

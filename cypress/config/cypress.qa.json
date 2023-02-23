@@ -4,7 +4,7 @@
 		"environment": "qa",
 		"apiUrl": "https://mayoor-qa.vercel.app/api/graphql"
 	},
-	"videoUploadOnPasses": false,
+	"video": false,
 	"retries": {
 		"runMode": 2,
 		"openMode": 1

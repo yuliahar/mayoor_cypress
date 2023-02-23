@@ -27,18 +27,10 @@ module.exports = defineConfig({
 		experimentalMemoryManagement: true,
 		requestTimeout: 15000,
 		responseTimeout: 15000,
-		reporter: 'cypress-multi-reporters',
-		reporterOptions: {
-			reporterEnabled: 'mochawesome',
-			mochawesomeReporterOptions: {
-				reportDir: 'cypress/reports/mocha',
-				quite: true,
-				overwrite: false,
-				html: false,
-				json: true,
-			},
-		},
+		reporter: 'cypress-mochawesome-reporter',
 		setupNodeEvents(on, config) {
+			require('cypress-mochawesome-reporter/plugin')(on);
+
 			const environment = config.env.configFile || 'development';
 			const configurationForEnvironment = fetchConfigurationByFile(environment);
 
