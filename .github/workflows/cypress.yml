@@ -39,7 +39,6 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-
       - name: Upload Cypress Screenshots
         uses: actions/upload-artifact@v1
         # Only capture images on failure
@@ -65,14 +64,17 @@ jobs:
           path: cypress/videos
 
       - name: Copy test execution videos
+        continue-on-error: true
         run: |
             mkdir public
             cp -r cypress/videos public/videos
 
       - name: Copy test execution screenshots
+        continue-on-error: true
         run: cp -r cypress/screenshots public/screenshots
 
       - name: Copy test execution logs
+        continue-on-error: true
         run: cp -r cypress/logs public/logs
 
       - name: Merge test results into one
