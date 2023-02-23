@@ -11,7 +11,7 @@ const Customer = require('./cypress/helpers/models/customer');
 const fetchConfigurationByFile = file => {
 	const pathOfConfigurationFile = `config/cypress.${file}.json`;
 
-	return file && fs.readJson(path.join(__dirname, '../mayoor_cypress/cypress', pathOfConfigurationFile));
+	return file && fs.readJson(path.join(__dirname, './cypress/', pathOfConfigurationFile));
 };
 
 module.exports = defineConfig({
