@@ -88,7 +88,7 @@ describe('Users', function () {
 		logout();
 		login(randomUser.email, randomUser.password);
 
-		verifyElementVisible(headerSelectors.userNameText, randomUser.name);
+		verifyElementVisible(headerSelectors.userNameText, randomUser.name + 1);
 	});
 	//
 	// it.skip('should verify if the form loads correctly', function () {
