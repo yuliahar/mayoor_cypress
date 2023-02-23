@@ -34,6 +34,7 @@ jobs:
           install: false
           command: npx cypress run --env configFile=qa
           browser: chrome
+          continue-on-error: true
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -62,3 +63,28 @@ jobs:
         with:
           name: cypress-videos
           path: cypress/videos
+
+      - name: Copy test execution videos
+        run: |
+            mkdir public
+            cp -r cypress/videos public/videos
+
+      - name: Copy test execution screenshots
+        run: cp -r cypress/screenshots public/screenshots
+
+      - name: Copy test execution logs
+        run: cp -r cypress/logs public/logs
+
+      - name: Merge test results into one
+        run: npm run combine-reports
+
+      - name: Generate HTML report
+        run: npm run generate-report
+
+      - name: Deploy report page
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
