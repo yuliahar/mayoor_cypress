@@ -26,3 +26,5 @@ jobs:
         run: npm run generate:prisma
       - name: Cypress run
         run: npx cypress run --env configFile=qa
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
