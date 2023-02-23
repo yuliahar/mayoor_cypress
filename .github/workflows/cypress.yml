@@ -20,10 +20,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Install dependencies
         run: npm i
+
       - name: Prisma generate
         run: npm run generate:prisma
+
       - name: Run Cypress e2e tests
         uses: cypress-io/github-action@v5
         with:
@@ -33,3 +36,29 @@ jobs:
           browser: chrome
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+      - name: Upload Cypress Screenshots
+        uses: actions/upload-artifact@v1
+        # Only capture images on failure
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+
+      - name: Upload Cypress Logs
+        uses: actions/upload-artifact@v1
+        # Only capture logs on failure
+        if: failure()
+        with:
+          name: cypress-logs
+          path: cypress/logs
+
+      - name: Upload Cypress Videos
+        uses: actions/upload-artifact@v1
+        # Only capture videos on failure
+        if: failure()
+        with:
+          name: cypress-videos
+          path: cypress/videos
