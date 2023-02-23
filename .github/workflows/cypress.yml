@@ -24,15 +24,12 @@ jobs:
         run: npm i
       - name: Prisma generate
         run: npm run generate:prisma
-      - name: 'UI Tests - Chrome'
+      - name: Run Cypress e2e tests
         uses: cypress-io/github-action@v5
         with:
           # we have already installed all dependencies above
           install: false
-          start: npm run cy:run:qa
-          wait-on: 'https://mayoor-qa.vercel.app'
-          wait-on-timeout: 120
+          command: npx cypress run --env configFile=qa
           browser: chrome
-          group: 'UI - Chrome'
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
