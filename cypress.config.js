@@ -7,6 +7,7 @@ const Material = require('./cypress/helpers/models/material');
 const Order = require('./cypress/helpers/models/order');
 const OrderItem = require('./cypress/helpers/models/orderItem');
 const Customer = require('./cypress/helpers/models/customer');
+const Address = require('./cypress/helpers/models/address');
 
 const fetchConfigurationByFile = file => {
 	const pathOfConfigurationFile = `config/cypress.${file}.json`;
@@ -46,6 +47,7 @@ module.exports = defineConfig({
 					Promise.all([
 						OrderItem.deleteMany(),
 						Order.deleteMany(),
+						Address.deleteMany(),
 						Customer.deleteMany(),
 						Material.deleteMany(),
 						User.deleteMany(),
@@ -57,6 +59,7 @@ module.exports = defineConfig({
 				deleteAllOrders: Order.deleteMany,
 				deleteAllOrderItems: OrderItem.deleteMany,
 				deleteAllCustomers: Customer.deleteMany,
+				deleteAllAddresses: Address.deleteMany,
 			});
 
 			on('after:spec', (spec, results) => {
