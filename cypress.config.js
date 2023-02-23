@@ -7,11 +7,12 @@ const Material = require('./cypress/helpers/models/material');
 const Order = require('./cypress/helpers/models/order');
 const OrderItem = require('./cypress/helpers/models/orderItem');
 const Customer = require('./cypress/helpers/models/customer');
+const Address = require('./cypress/helpers/models/address');
 
 const fetchConfigurationByFile = file => {
 	const pathOfConfigurationFile = `config/cypress.${file}.json`;
 
-	return file && fs.readJson(path.join(__dirname, '../mayoor/cypress', pathOfConfigurationFile));
+	return file && fs.readJson(path.join(__dirname, './cypress/', pathOfConfigurationFile));
 };
 
 module.exports = defineConfig({
@@ -26,6 +27,17 @@ module.exports = defineConfig({
 		experimentalMemoryManagement: true,
 		requestTimeout: 15000,
 		responseTimeout: 15000,
+		reporter: 'cypress-multi-reporters',
+		reporterOptions: {
+			reporterEnabled: 'mochawesome',
+			mochawesomeReporterOptions: {
+				reportDir: 'cypress/reports/mocha',
+				quite: true,
+				overwrite: false,
+				html: false,
+				json: true,
+			},
+		},
 		setupNodeEvents(on, config) {
 			const environment = config.env.configFile || 'development';
 			const configurationForEnvironment = fetchConfigurationByFile(environment);
@@ -35,6 +47,7 @@ module.exports = defineConfig({
 					Promise.all([
 						OrderItem.deleteMany(),
 						Order.deleteMany(),
+						Address.deleteMany(),
 						Customer.deleteMany(),
 						Material.deleteMany(),
 						User.deleteMany(),
@@ -46,6 +59,7 @@ module.exports = defineConfig({
 				deleteAllOrders: Order.deleteMany,
 				deleteAllOrderItems: OrderItem.deleteMany,
 				deleteAllCustomers: Customer.deleteMany,
+				deleteAllAddresses: Address.deleteMany,
 			});
 
 			on('after:spec', (spec, results) => {
