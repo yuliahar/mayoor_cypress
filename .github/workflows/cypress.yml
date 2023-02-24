@@ -67,7 +67,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           BRANCH: gh-pages
-          FOLDER: cypress/reports
+          FOLDER: cypress/reports/html
 
 #      - name: Deploy report page
 #        uses: peaceiris/actions-gh-pages@v3
