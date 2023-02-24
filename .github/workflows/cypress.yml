@@ -62,15 +62,9 @@ jobs:
           name: mochawesome
           path: cypress/reports
 
-      - name: Reports deploy 🚀
-        if: always()
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          BRANCH: gh-pages
-          FOLDER: cypress/reports/html
-
-#      - name: Deploy report page
-#        uses: peaceiris/actions-gh-pages@v3
-#        with:
-#          github_token: ${{ secrets.GITHUB_TOKEN }}
-#          publish_dir: ./public
+#       - name: Reports deploy 🚀
+#         if: always()
+#         uses: JamesIves/github-pages-deploy-action@v4
+#         with:
+#           BRANCH: gh-pages
+#           FOLDER: cypress/reports/html
