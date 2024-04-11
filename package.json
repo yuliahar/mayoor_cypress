@@ -47,7 +47,7 @@
 		"mochawesome-merge": "^4.2.2",
 		"mochawesome-report-generator": "^6.2.0",
 		"mongoose": "^6.9.1",
-		"nexus-prisma": "^1.0.4",
+		"nexus-prisma": "^2.0.5",
 		"prettier": "^2.8.3",
 		"prisma": "^4.10.1"
 	},
