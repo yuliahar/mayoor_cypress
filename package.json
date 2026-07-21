@@ -34,7 +34,7 @@
 		"cypress-plugin-api": "^2.10.0",
 		"del": "^7.0.0",
 		"dotenv": "^16.0.3",
-		"eslint": "^8.32.0",
+		"eslint": "^10.7.0",
 		"eslint-config-prettier": "^8.6.0",
 		"eslint-plugin-cypress": "^2.12.1",
 		"eslint-plugin-mocha": "^10.1.0",
@@ -47,7 +47,7 @@
 		"mochawesome-merge": "^4.2.2",
 		"mochawesome-report-generator": "^6.2.0",
 		"mongoose": "^6.9.1",
-		"nexus-prisma": "^1.0.4",
+		"nexus-prisma": "^2.0.8",
 		"prettier": "^2.8.3",
 		"prisma": "^4.10.1"
 	},
